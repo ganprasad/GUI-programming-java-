@@ -1,0 +1,122 @@
+package p;
+import java.io.*;
+import java.awt.*;
+import java.awt.event.*;
+import Datacon.*;
+import java .sql.*;
+import javax.swing.*;
+class Complaint extends ConDriver implements ActionListener 
+{
+	Label l1,l2,l3,l4,l5;
+	TextField t1,t2,t3;
+	TextArea a,a1;
+	Panel p1,p2;
+	Button b1,b2,b3,b4;
+	Image i;
+	ConDriver dt;
+  	ResultSet rs2;
+	public Complaint()
+	{	
+		dt=new ConDriver();     
+		setBackground(new Color(14,58,119));
+		setFont(new Font("Calibri",Font.PLAIN,14));
+		i=Toolkit.getDefaultToolkit().createImage("Complaint.png");
+		p1=new Panel();p1.setLayout(new FlowLayout(FlowLayout.LEFT,80,80));
+		l1=new Label("Complaint No.");l1.setForeground(Color.white);p1.add(l1);
+		t1=new TextField(5);p1.add(t1);
+		b4=new Button("Search");b4.setBackground(Color.pink);p1.add(b4);b4.addActionListener(this);      //That way when a button is pressed the your 												actionPerformed method will be called."this" is a reference to 												the current object.
+
+		l2=new Label("Complaint Date");l2.setForeground(Color.white);p1.add(l2);
+		t2=new TextField(20);p1.add(t2);
+		l3=new Label("Complaint ID");l3.setForeground(Color.white);p1.add(l3);
+		t3=new TextField(5);p1.add(t3);
+		l4=new Label("Crime Description");l4.setForeground(Color.white);p1.add(l4);
+		a=new TextArea(3,20);p1.add(a);
+		l5=new Label("Suspect Details");l5.setForeground(Color.white);p1.add(l5);
+		a1=new TextArea(3,20);p1.add(a1);
+		add(p1,BorderLayout.CENTER);
+		p2=new Panel();p2.setLayout(new FlowLayout(FlowLayout.CENTER,30,0));
+		b1=new Button("Add");b1.setBackground(Color.pink);p2.add(b1);b1.addActionListener(this);
+		b2=new Button("Edit");b2.setBackground(Color.pink);p2.add(b2);b2.addActionListener(this);
+		b3=new Button("Delete");b3.setBackground(Color.pink);p2.add(b3);b3.addActionListener(this);
+		add(p2,BorderLayout.SOUTH);
+	                  addWindowListener(new WindowAdapter()
+                                     {
+	                       public void windowClosing(WindowEvent we)
+	                      {
+	                                setVisible(false);
+	                      }
+	                 });
+		 setSize(1200,700);
+       		 setVisible(true);
+       		 setTitle("COMPLAINT DETAILS");
+	}
+	public Insets getInsets() 
+	{
+		return new Insets(100, 100, 20, 130);
+	}
+	public void paint(Graphics g)
+	{	
+		g.drawImage(i,280,25,this);
+		setBackground(new Color(14,58,119));
+		setForeground(Color.yellow);
+		g.fillRect(0,90,1200,10);
+	}
+	public void actionPerformed(ActionEvent ae)
+	{
+	   try{
+		String s=ae.getActionCommand(); //http://www.java-tips.org/java-se-tips/javax.swing/how-to-create-a-download-manager-in-java.html
+		if(s.equals("Add"))
+		{
+ 	                    	dt.insupdel("insert into Complaint values('"+t1.getText()+"','"+t2.getText()+"','"+t3.getText()+"','"+a.getText()+"','"+a1.getText()+"')");
+			 JOptionPane.showMessageDialog(this,"Data successfully inserted!","Message",1);
+		}         
+		if(s.equals("Edit"))
+		{
+		   JOptionPane.showMessageDialog(this,"Data successfully updated for COMPLAINT_NO='"+t1.getText()+"'","Message",1);
+		   dt.insupdel("update Complaint set COMPLAINT_DATE='"+t2.getText()+"', COMPLAINT_ID='"+t3.getText()+"', CRIME_DESCRIPTION='"+a.getText()+"',SUSPECT_DETAILS='"+a1.getText()+"' where COMPLAINT_NO='"+t1.getText()+"'");
+		}
+		if(s.equals("Search"))
+		{                  
+			rs2=dt.showdata("select * from Complaint where COMPLAINT_NO='"+t1.getText()+"'");
+		                      if(rs2.next()) // It actually advances the  result set cursor.
+                                                             { 
+				JOptionPane.showMessageDialog(this,"COMPLAINT_NO='"+t1.getText()+"' is present.","Message",1);
+				rs2=dt.showdata("select * from Complaint where COMPLAINT_NO='"+t1.getText()+"'");
+                   				rs2.next();
+                        			display();
+			}
+                                              else
+                                              {
+                               JOptionPane.showMessageDialog(this,"COMPLAINT_NO='"+t1.getText()+"' is not present.","Message",1);
+	                                          t2.setText("");
+                                                  t3.setText(""); //he getText method returns a String, while the setText receives a String.
+		                                  a.setText("");
+		                                  a1.setText("");
+                                              }
+	                }
+                                           if(s.equals("Delete"))
+                                          {
+                                                    JOptionPane.showMessageDialog(this,"Data successfully deleted for COMPLAINT_NO='"+t1.getText()+"' ","Message",1);
+		            dt.insupdel("delete * from Complaint where COMPLAINT_NO='"+t1.getText()+"'");
+		             t1.setText("");
+		            t2.setText("");
+                                                    t3.setText("");
+		            a.setText("");
+		           a1.setText("");
+                                                 
+   		}
+                             }catch(Exception e){System.out.println(e);} 
+                    }
+	public void display()
+                    {
+	    try 
+	    {
+    		t1.setText(rs2.getString(1)); //rs2 object columns no 1 data will retrieve in string form. 
+	                   t2.setText(rs2.getString(2));
+                                        t3.setText(rs2.getString(3)); // queries in database goes in string form.
+		a.setText(rs2.getString(4));
+		a1.setText(rs2.getString(5));
+                          }catch(Exception e){System.out.println(e);} 
+                  }
+}
