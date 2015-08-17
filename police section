@@ -1,0 +1,120 @@
+package p;
+import java.io.*;
+import java.awt.*;
+import java.awt.event.*;
+import Datacon.*;
+import java .sql.*;
+import javax.swing.*;
+class Police extends ConDriver implements ActionListener 
+{
+	Label l1,l2,l3,l4,l5,l6,l7;
+	TextField t1,t2,t3,t4,t5,t6,t7;                         
+	Panel p1,p2;
+	Button b1,b2,b3,b4;
+	Image i;
+	ConDriver dt;
+  	ResultSet rs2;
+	public Police()
+	{	
+		dt=new ConDriver();   
+		setBackground(new Color(14,58,119));
+		setFont(new Font("Calibri",Font.PLAIN,14));
+		i=Toolkit.getDefaultToolkit().createImage("Police.png");
+		p1=new Panel();
+		p1.setLayout(new FlowLayout(FlowLayout.LEFT,70,90));
+		l1=new Label("Police ID");l1.setForeground(Color.white);p1.add(l1);
+		t1=new TextField(5);p1.add(t1);
+		b4=new Button("Search");b4.setBackground(Color.pink);p1.add(b4);b4.addActionListener(this);
+		l2=new Label("Name");l2.setForeground(Color.white);p1.add(l2);
+		t2=new TextField(20);p1.add(t2);
+		l3=new Label("Designation");l3.setForeground(Color.white);p1.add(l3);
+		t3=new TextField(20);p1.add(t3);
+		l4=new Label("Job Location");l4.setForeground(Color.white);p1.add(l4);
+		t4=new TextField(20);p1.add(t4);
+		l5=new Label("City");l5.setForeground(Color.white);p1.add(l5);
+		t5=new TextField(15);p1.add(t5);
+		l6=new Label("State");l6.setForeground(Color.white);p1.add(l6);
+		t6=new TextField(15);p1.add(t6);
+		l7=new Label("Pincode");l7.setForeground(Color.white);p1.add(l7);
+		t7=new TextField(10);p1.add(t7);
+		add(p1,BorderLayout.CENTER);
+		p2=new Panel();p2.setLayout(new FlowLayout(FlowLayout.CENTER,30,0));
+		b1=new Button("Add");b1.setBackground(Color.pink);p2.add(b1);b1.addActionListener(this);
+		b2=new Button("Edit");b2.setBackground(Color.pink);p2.add(b2);b2.addActionListener(this);
+		b3=new Button("Delete");b3.setBackground(Color.pink);p2.add(b3);b3.addActionListener(this);
+		add(p2,BorderLayout.SOUTH);
+	                  addWindowListener(new WindowAdapter()
+                                     {
+	                       public void windowClosing(WindowEvent we)
+	                      {
+	                                setVisible(false);
+	                      }
+                                   });
+		setSize(1280,700);
+       		setVisible(true);
+	                    setTitle("Police Details");
+	}
+	public Insets getInsets() 
+	{
+		return new Insets(100, 40, 20, 50);
+	}
+	public void paint(Graphics g)
+	{	
+		g.drawImage(i,280,25,this);
+		setBackground(new Color(14,58,119));
+		setForeground(Color.yellow);
+		g.fillRect(0,90,1280,10);
+	}
+	public void actionPerformed(ActionEvent ae)
+	{
+		 try{
+		String s=ae.getActionCommand();
+		if(s.equals("Add"))
+		{
+ 	                    	dt.insupdel("insert into Police values('"+t1.getText()+"','"+t2.getText()+"','"+t3.getText()+"','"+t4.getText()+"','"+t5.getText()+"','"+t6.getText			()+"',"+Integer.parseInt(t7.getText())+")");
+			 JOptionPane.showMessageDialog(this,"Data successfully inserted!","Message",1);
+		}         
+		if(s.equals("Edit"))
+		{
+		   JOptionPane.showMessageDialog(this,"Data successfully updated for POLICE_ID='"+t1.getText()+"'","Message",1);
+		   dt.insupdel("update Police set POLICE_NAME='"+t2.getText()+"', DESIGNATION='"+t3.getText()+"',JOB_LOCATION='"+t4.getText()+"',CITY='"+t5.getText                                           ()+"',STATE= '"+t6.getText()+"',PINCODE="+Integer.parseInt(t7.getText())+" where POLICE_ID='"+t1.getText()+"'");
+		}
+		if(s.equals("Search"))
+		{                  
+			rs2=dt.showdata("select * from Police where POLICE_ID='"+t1.getText()+"'");
+		                      if(rs2.next())
+                                                             { 
+				JOptionPane.showMessageDialog(this,"POLICE_ID='"+t1.getText()+"' is present.","Message",1);
+				rs2=dt.showdata("select * from Police where POLICE_ID='"+t1.getText()+"'");
+                   				rs2.next();
+                        			display();
+                       	                      }
+                                              else
+                                              {
+                                                              JOptionPane.showMessageDialog(this,"POLICE_ID='"+t1.getText()+"' is not present.","Message",1);
+	                		 t2.setText("");t3.setText("");t4.setText("");t5.setText("");t6.setText("");t7.setText("");
+	                           }
+		}
+                  		 if(s.equals("Delete"))
+                                          {
+                                                    JOptionPane.showMessageDialog(this,"Data successfully deleted for POLICE_ID='"+t1.getText()+"' ","Message",1);
+		            dt.insupdel("delete * from Police where POLICE_ID='"+t1.getText()+"'");
+  		                    t1.setText("");t2.setText("");t3.setText("");t4.setText("");t5.setText("");
+			t6.setText("");t7.setText("");
+   		}
+                             }catch(Exception e){System.out.println(e);} 
+	}
+	public void display()
+                    {
+	    try 
+	    {
+    		t1.setText(rs2.getString(1));
+	                   t2.setText(rs2.getString(2));
+		t3.setText(rs2.getString(3));
+                                        t4.setText(rs2.getString(4));
+		t5.setText(rs2.getString(5));
+		t6.setText(rs2.getString(6));
+		t7.setText(Integer.toString(rs2.getInt(7)));	
+                          }catch(Exception e){System.out.println(e);} 
+                  }
+}
