@@ -1,0 +1,78 @@
+package p;
+import java.io.*;
+import java.awt.*;
+import java.awt.event.*;
+import Datacon.*;
+import java .sql.*;
+import javax.swing.*;
+class Complaint1 extends ConDriver implements ActionListener 
+{
+	Label l1,l2,l3,l4,l5;
+	TextField t1,t2,t3;
+	TextArea a,a1;
+	Panel p1,p2;
+	Button b1,b2;
+	Image i;
+	ConDriver dt;
+  	ResultSet rs2;
+	public Complaint1()
+	{	
+		dt=new ConDriver();     
+		setBackground(new Color(14,58,119));
+		setFont(new Font("Calibri",Font.PLAIN,14));
+		i=Toolkit.getDefaultToolkit().createImage("Complaint.png");
+		p1=new Panel();p1.setLayout(new FlowLayout(FlowLayout.LEFT,80,80));
+		l1=new Label("Complaint No.");l1.setForeground(Color.white);p1.add(l1);
+		t1=new TextField(5);p1.add(t1);
+		l2=new Label("Complaint Date");l2.setForeground(Color.white);p1.add(l2);
+		t2=new TextField(20);p1.add(t2);
+		l3=new Label("Complaint ID");l3.setForeground(Color.white);p1.add(l3);
+		t3=new TextField(5);p1.add(t3);
+		l4=new Label("Crime Description");l4.setForeground(Color.white);p1.add(l4);
+		a=new TextArea(3,20);p1.add(a);
+		l5=new Label("Suspect Details");l5.setForeground(Color.white);p1.add(l5);
+		a1=new TextArea(3,20);p1.add(a1);
+		add(p1,BorderLayout.CENTER);
+		p2=new Panel();p2.setLayout(new FlowLayout(FlowLayout.CENTER,30,0));
+		b1=new Button("Done");b1.setBackground(Color.pink);p2.add(b1);b1.addActionListener(this);
+		b2=new Button("Next");b2.setBackground(Color.pink);p2.add(b2);b2.addActionListener(this);
+		add(p2,BorderLayout.SOUTH);
+	                  addWindowListener(new WindowAdapter()
+                                     {
+	                       public void windowClosing(WindowEvent we)
+	                      {
+	                                setVisible(false);
+	                      }
+                                   });
+		 setSize(1100,700);
+       		setVisible(true);
+       		setTitle("COMPLAINT DETAILS");
+  	}
+	public Insets getInsets() 
+	{
+		return new Insets(100, 100, 20, 130);
+	}
+	public void paint(Graphics g)
+	{	
+		g.drawImage(i,280,25,this);
+		setBackground(new Color(14,58,119));
+		setForeground(Color.yellow);
+		g.fillRect(0,90,1200,10);
+	}
+	public void actionPerformed(ActionEvent ae)
+	{
+	   try{
+		String s=ae.getActionCommand();
+		if(s.equals("Done"))
+		{
+ 	                    	dt.insupdel("insert into Complaint values('"+t1.getText()+"','"+t2.getText()+"','"+t3.getText()+"','"+a.getText()+"','"+a1.getText()+"')");
+			 JOptionPane.showMessageDialog(this,"Data successfully inserted!","Message",1);
+		}         
+		if(s.equals("Next"))
+		{
+			new Crime1().setVisible(true);
+		}
+		  
+                          }catch(Exception e){System.out.println(e);} 
+                  }
+}
